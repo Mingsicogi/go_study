@@ -26,6 +26,8 @@ func main() {
 
 	a, b := nakedReturn("minssogi")
 	fmt.Println(a, b)
+
+	fmt.Println(sum1to10(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 }
 
 // simple function
@@ -56,4 +58,16 @@ func nakedReturn(name string) (length int, upperName string) {
 func forDeferTest(message string) {
 	time.Sleep(1 * time.Second)
 	fmt.Println(message)
+}
+
+func sum1to10(numbers ...int) (total int) {
+	for i, number := range numbers {
+		fmt.Println(i, number)
+		total += number
+	}
+
+	for i := 0; i < len(numbers); i++ {
+		total += numbers[i]
+	}
+	return
 }
