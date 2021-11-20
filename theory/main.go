@@ -22,6 +22,8 @@ func main() {
 	fmt.Println(lengthOfName, upperCaseOfName)
 
 	dynamicArguments("mins", "jings", "jeon", "eun", "mike")
+
+	fmt.Println(nakedReturn("minssogi"))
 }
 
 // simple function
@@ -37,4 +39,11 @@ func lengthAndUpperStr(name string) (int, string) {
 // dynamic arguments
 func dynamicArguments(names ...string) {
 	fmt.Println(names)
+}
+
+// naked return
+func nakedReturn(name string) (length int, upperName string) {
+	length = len(name)
+	upperName = strings.ToUpper(name)
+	return
 }
