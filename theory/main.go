@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Mingsicogi/go_study/theory/utils"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -23,7 +24,8 @@ func main() {
 
 	dynamicArguments("mins", "jings", "jeon", "eun", "mike")
 
-	fmt.Println(nakedReturn("minssogi"))
+	a, b := nakedReturn("minssogi")
+	fmt.Println(a, b)
 }
 
 // simple function
@@ -43,7 +45,15 @@ func dynamicArguments(names ...string) {
 
 // naked return
 func nakedReturn(name string) (length int, upperName string) {
+	defer forDeferTest("Additional nakedReturn function finish!")
 	length = len(name)
 	upperName = strings.ToUpper(name)
+	fmt.Println("nakedReturn business logic finish")
 	return
+}
+
+// defer => execute command after function finished
+func forDeferTest(message string) {
+	time.Sleep(1 * time.Second)
+	fmt.Println(message)
 }
