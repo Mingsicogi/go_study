@@ -20,6 +20,8 @@ func main() {
 
 	lengthOfName, upperCaseOfName := lengthAndUpperStr("minssogi")
 	fmt.Println(lengthOfName, upperCaseOfName)
+
+	dynamicArguments("mins", "jings", "jeon", "eun", "mike")
 }
 
 // simple function
@@ -30,4 +32,9 @@ func multiply(a int, b int) int {
 // multiple return
 func lengthAndUpperStr(name string) (int, string) {
 	return len(name), strings.ToUpper(name)
+}
+
+// dynamic arguments
+func dynamicArguments(names ...string) {
+	fmt.Println(names)
 }
