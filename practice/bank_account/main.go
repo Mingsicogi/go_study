@@ -8,7 +8,19 @@ import (
 func main() {
 	minssogiAccount := accounts.CreateAccount("minssogi")
 
-	fmt.Println(minssogiAccount.Deposit(50000))
+	fmt.Println("Deposit :", minssogiAccount.Deposit(50000))
 
-	fmt.Println(minssogiAccount)
+	//fmt.Println(minssogiAccount)
+
+	error := minssogiAccount.Withdraw(5000)
+	if error == nil {
+		fmt.Println("Withdraw :", minssogiAccount.Balance())
+	}
+
+	error = minssogiAccount.Withdraw(50000)
+	if error == nil {
+		fmt.Println("Withdraw :", minssogiAccount.Balance())
+	} else {
+		fmt.Println(error.Error())
+	}
 }
