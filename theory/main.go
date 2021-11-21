@@ -40,6 +40,8 @@ func main() {
 	arrayAndSlice()
 
 	mapPractice()
+
+	fmt.Println(createPerson("minssogi", 20, "computer", "exercise", "shopping"))
 }
 
 // simple function
@@ -143,4 +145,16 @@ func mapPractice() {
 	for key, value := range empInfo {
 		fmt.Println(key, value)
 	}
+}
+
+// struct
+type person struct {
+	name      string
+	age       int
+	favorites []string
+}
+
+func createPerson(name string, age int, favorites ...string) (newPerson person) {
+	newPerson = person{name: name, age: age, favorites: favorites}
+	return
 }
