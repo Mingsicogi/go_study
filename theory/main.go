@@ -28,6 +28,8 @@ func main() {
 	fmt.Println(a, b)
 
 	fmt.Println(sum1to10(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
+
+	fmt.Println(canIDrink(19))
 }
 
 // simple function
@@ -62,8 +64,8 @@ func forDeferTest(message string) {
 
 // for loop
 func sum1to10(numbers ...int) (total int) {
-	for i, number := range numbers {
-		fmt.Println(i, number)
+	for _, number := range numbers {
+		//fmt.Println(i, number)
 		total += number
 	}
 
@@ -71,4 +73,13 @@ func sum1to10(numbers ...int) (total int) {
 		total += numbers[i]
 	}
 	return
+}
+
+// if - variable expression
+func canIDrink(age int) bool {
+	if checkAge := age - 1; checkAge > 18 {
+		return true
+	}
+
+	return false
 }
