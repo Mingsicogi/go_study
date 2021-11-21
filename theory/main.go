@@ -60,6 +60,7 @@ func forDeferTest(message string) {
 	fmt.Println(message)
 }
 
+// for loop
 func sum1to10(numbers ...int) (total int) {
 	for i, number := range numbers {
 		fmt.Println(i, number)
