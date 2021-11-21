@@ -32,6 +32,10 @@ func main() {
 	fmt.Println(canIDrink(19))
 
 	fmt.Println(isItFruit("orange"))
+
+	fmt.Println("================================")
+
+	pointer()
 }
 
 // simple function
@@ -100,4 +104,19 @@ func isItFruit(something string) bool {
 	}
 
 	return false
+}
+
+// & => address, * => see though
+func pointer() {
+	a := 10
+	b := &a
+
+	fmt.Println("a =", a, &a)
+	fmt.Println("b =", b, &b, *b)
+
+	a = 100000
+	fmt.Println("change a value as", a)
+
+	fmt.Println("a =", a, &a)
+	fmt.Println("b =", b, &b, *b)
 }
