@@ -30,6 +30,8 @@ func main() {
 	fmt.Println(sum1to10(1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 
 	fmt.Println(canIDrink(19))
+
+	fmt.Println(isItFruit("orange"))
 }
 
 // simple function
@@ -78,6 +80,22 @@ func sum1to10(numbers ...int) (total int) {
 // if - variable expression
 func canIDrink(age int) bool {
 	if checkAge := age - 1; checkAge > 18 {
+		return true
+	}
+
+	return false
+}
+
+// switch case
+func isItFruit(something string) bool {
+	switch {
+	case "apple" == strings.ToLower(something):
+		return true
+	case "banana" == strings.ToLower(something):
+		return true
+	case "orange" == strings.ToLower(something):
+		return true
+	case "grape" == strings.ToLower(something):
 		return true
 	}
 
