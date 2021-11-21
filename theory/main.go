@@ -36,6 +36,8 @@ func main() {
 	fmt.Println("================================")
 
 	pointer()
+
+	arrayAndSlice()
 }
 
 // simple function
@@ -119,4 +121,14 @@ func pointer() {
 
 	fmt.Println("a =", a, &a)
 	fmt.Println("b =", b, &b, *b)
+}
+
+// array, slice
+func arrayAndSlice() {
+	fruits := [5]string{"apple", "banana", "orange"}
+	fmt.Println(fruits)
+
+	names := []string{"mins", "jeon"}
+	newNames := append(names, "mark")
+	fmt.Println(newNames)
 }
