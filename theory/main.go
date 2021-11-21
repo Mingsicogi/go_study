@@ -38,6 +38,8 @@ func main() {
 	pointer()
 
 	arrayAndSlice()
+
+	mapPractice()
 }
 
 // simple function
@@ -131,4 +133,14 @@ func arrayAndSlice() {
 	names := []string{"mins", "jeon"}
 	newNames := append(names, "mark")
 	fmt.Println(newNames)
+}
+
+// map
+func mapPractice() {
+	empInfo := map[string]string{"name": "minssogi", "age": "20"}
+	fmt.Println(empInfo)
+
+	for key, value := range empInfo {
+		fmt.Println(key, value)
+	}
 }
