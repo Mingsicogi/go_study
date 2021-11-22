@@ -23,4 +23,7 @@ func main() {
 	} else {
 		fmt.Println(error.Error())
 	}
+
+	//fmt.Println("Result:", minssogiAccount.Balance(), minssogiAccount.Name())
+	fmt.Println("Result:", minssogiAccount)
 }

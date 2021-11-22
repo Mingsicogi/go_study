@@ -1,6 +1,9 @@
 package accounts
 
-import "github.com/Mingsicogi/go_study/practice/bank_account/common_constants"
+import (
+	"fmt"
+	"github.com/Mingsicogi/go_study/practice/bank_account/common_constants"
+)
 
 type Account struct {
 	name    string
@@ -30,4 +33,16 @@ func (account *Account) Withdraw(amount int) error {
 
 	account.balance -= amount
 	return nil
+}
+
+func (account *Account) ChangeName(newName string) {
+	account.name = newName
+}
+
+func (account Account) Name() string {
+	return account.name
+}
+
+func (account Account) String() string {
+	return fmt.Sprint(account.Balance(), " ", account.Name())
 }
