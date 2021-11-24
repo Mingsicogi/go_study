@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 var urls = []string{
@@ -16,12 +17,26 @@ var urls = []string{
 }
 
 func main() {
-	for _, url := range urls {
-		err := hitURL(url)
-		if err != nil {
-			fmt.Println(err)
-		}
+	channel := make(chan string)
+
+	for i := 0; i < 10; i++ {
+		go goRoutine(strconv.Itoa(i), channel)
 	}
+
+	fmt.Println(<-channel)
+	//fmt.Println(<- channel)
+	//fmt.Println(<- channel)
+	//fmt.Println(<- channel)
+	//fmt.Println(<- channel)
+	//fmt.Println(<- channel)
+
+	//for _, url := range urls {
+	//	err := hitURL(url)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//	}
+	//}
+
 }
 
 func hitURL(url string) error {
@@ -30,4 +45,9 @@ func hitURL(url string) error {
 		fmt.Println(url, "Request Result :", response.Status)
 	}
 	return err
+}
+
+func goRoutine(message string, channel chan string) {
+	fmt.Println("receive message", message)
+	channel <- "call from go routine function " + message
 }
