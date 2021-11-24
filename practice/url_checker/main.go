@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 )
 
 var urls = []string{
@@ -14,37 +13,67 @@ var urls = []string{
 	"https://facebook.com",
 	"https://twitter.com",
 	"https://line.me",
+	"https://blog.naver.com/jieuni4u",
+	"https://www.amazon.com",
+	"https://www.reddit.com",
+}
+
+type result struct {
+	url        string
+	status     string
+	errMessage string
 }
 
 func main() {
-	channel := make(chan string)
-
-	for i := 0; i < 10; i++ {
-		go goRoutine(strconv.Itoa(i), channel)
+	channel := make(chan result)
+	results := make(map[string]string)
+	for _, url := range urls {
+		go hitURLForGoroutine(url, channel)
 	}
 
-	fmt.Println(<-channel)
-	//fmt.Println(<- channel)
-	//fmt.Println(<- channel)
-	//fmt.Println(<- channel)
-	//fmt.Println(<- channel)
-	//fmt.Println(<- channel)
+	for i := 0; i < len(urls); i++ {
+		channelMessage := <-channel
+		results[channelMessage.url] = channelMessage.status
+	}
 
-	//for _, url := range urls {
-	//	err := hitURL(url)
-	//	if err != nil {
-	//		fmt.Println(err)
-	//	}
-	//}
+	fmt.Println(results)
 
+	fmt.Println("\n===================================\n")
+
+	for _, url := range urls {
+		result, err := hitURL(url)
+		if err == nil {
+			fmt.Println(result)
+		} else {
+			fmt.Println(err)
+		}
+	}
 }
 
-func hitURL(url string) error {
+func hitURL(url string) (string, error) {
 	response, err := http.Get(url)
 	if err == nil {
-		fmt.Println(url, "Request Result :", response.Status)
+		return url + " hit result : " + response.Status, nil
+	} else {
+		return "", err
 	}
-	return err
+}
+
+// channel send only(<-)
+func hitURLForGoroutine(url string, channel chan<- result) {
+	response, err := http.Get(url)
+
+	reqResult := result{
+		url: url,
+	}
+
+	if err != nil {
+		reqResult.errMessage = err.Error()
+	} else {
+		reqResult.status = response.Status
+	}
+
+	channel <- reqResult
 }
 
 func goRoutine(message string, channel chan string) {
