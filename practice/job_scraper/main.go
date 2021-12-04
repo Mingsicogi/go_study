@@ -86,7 +86,9 @@ func scraper(url string) []scraperResult {
 			})
 			job.description = rightPart.Find(".desc").Text()
 
-			jobs = append(jobs, job)
+			if job.title != "" { // filtering invalid data
+				jobs = append(jobs, job)
+			}
 		})
 	}
 
