@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	_ "github.com/PuerkitoBio/goquery"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -27,72 +29,101 @@ func (s scraperResult) String() string {
 
 func main() {
 	baseURL := "https://www.jobkorea.co.kr/recruit/joblist?menucode=duty&dutyCtgr=10016#anchorGICnt_"
-	jobkoreaJobs := scraper(baseURL)
+	howManyPage := 11
+	mainChannel := make(chan []scraperResult)
 
-	for _, jobkoreaJob := range jobkoreaJobs {
-		fmt.Println(jobkoreaJob)
-	}
+	go scraper(baseURL, howManyPage, mainChannel)
+
+	scraperResultsToCsvFile(<-mainChannel)
 }
 
-func scraper(url string) []scraperResult {
+func scraper(url string, howManyPage int, mainChannel chan<- []scraperResult) {
 	// Request the HTML page.
-	res, err := http.Get(url)
+	//res, err := http.Get(url)
+	//errorCheck(err)
+	//respCheck(res)
+
+	//defer res.Body.Close()
+
+	//doc, err := goquery.NewDocumentFromReader(res.Body)
+	//errorCheck(err)
+
+	// get total page of url
+	//totalPageOfUrl := getTotalPages(doc)
+
+	// scrapping
+	c := make(chan []scraperResult)
+	for i := 2; i <= howManyPage; i++ {
+		targetUrl := url + strconv.Itoa(i)
+		go scrapping(targetUrl, c)
+	}
+
+	mainChannel <- <-c
+}
+
+func scrapping(targetUrl string, c chan<- []scraperResult) {
+	//fmt.Println(targetUrl, "page scrapping...")
+	res, err := http.Get(targetUrl)
 	errorCheck(err)
 	respCheck(res)
+	fmt.Println(targetUrl, "scrapping result :", res.Status)
 
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	errorCheck(err)
 
-	// get total page of url
-	totalPageOfUrl := getTotalPages(doc)
-
-	// scrapping
 	var jobs []scraperResult
-	for i := 11; i <= totalPageOfUrl; i++ {
-		targetPage := url + strconv.Itoa(i)
-		fmt.Println(targetPage, "page scrapping...")
-		res, err := http.Get(targetPage)
-		errorCheck(err)
-		respCheck(res)
+	doc.Find(".tplList.tplJobList").Find(".devloopArea").Each(func(i int, hireCard *goquery.Selection) {
+		var job scraperResult
 
-		doc, err := goquery.NewDocumentFromReader(res.Body)
-		errorCheck(err)
+		job.companyName = cleanString(hireCard.Find(".tplCo>a").Text())
 
-		doc.Find(".tplList.tplJobList").Find(".devloopArea").Each(func(i int, hireCard *goquery.Selection) {
-			var job = scraperResult{}
+		rightPart := hireCard.Find(".tplTit")
+		job.title = cleanString(rightPart.Find(".link.normalLog").Text())
 
-			job.companyName = cleanString(hireCard.Find(".tplCo>a").Text())
-
-			rightPart := hireCard.Find(".tplTit")
-			job.title = cleanString(rightPart.Find(".link.normalLog").Text())
-
-			rightPart.Find(".cell").Each(func(i int, s *goquery.Selection) {
-				//fmt.Println(strings.Join(strings.Fields(strings.TrimSpace(s.Find(".cell").Text())), " "))
-				//fmt.Println(i, s.Text())
-				switch i {
-				case 0:
-					job.lookingFor = s.Text()
-				case 1:
-					job.degree = s.Text()
-				case 2:
-					job.location = s.Text()
-				case 3:
-					job.hireType = s.Text()
-				case 4:
-					job.salary = s.Text()
-				}
-			})
-			job.description = rightPart.Find(".desc").Text()
-
-			if job.title != "" { // filtering invalid data
-				jobs = append(jobs, job)
+		rightPart.Find(".cell").Each(func(i int, s *goquery.Selection) {
+			switch i {
+			case 0:
+				job.lookingFor = cleanString(s.Text())
+			case 1:
+				job.degree = cleanString(s.Text())
+			case 2:
+				job.location = cleanString(s.Text())
+			case 3:
+				job.hireType = cleanString(s.Text())
+			case 4:
+				job.salary = cleanString(s.Text())
 			}
 		})
-	}
 
-	return jobs
+		job.description = rightPart.Find(".desc").Text()
+
+		if job.title != "" { // filtering invalid data
+			jobs = append(jobs, job)
+		}
+	})
+
+	fmt.Println(jobs)
+	c <- jobs
+}
+
+func scraperResultsToCsvFile(jobs []scraperResult) {
+	file, err := os.Create("practice/job_scraper/csv/jobkorea.csv")
+	errorCheck(err)
+
+	w := csv.NewWriter(file)
+	defer w.Flush()
+
+	headers := []string{"companyName", "title", "lookingFor", "degree", "location", "hireType", "salary", "description"}
+	wErr := w.Write(headers)
+	errorCheck(wErr)
+
+	for _, job := range jobs {
+		jobSlice := []string{job.companyName, job.title, job.lookingFor, job.degree, job.location, job.hireType, job.salary, job.description}
+		wErr := w.Write(jobSlice)
+		errorCheck(wErr)
+	}
 }
 
 func cleanString(str string) string {
